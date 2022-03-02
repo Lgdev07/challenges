@@ -13,33 +13,26 @@ defmodule CompanyChart do
       :world
 
   """
-  def solve() do
-    workers = 
-    [
-      %{id: 1, name: "CEO", parent_id: nil },
-      %{id: 2, name: "CTO", parent_id: 1 },
-      %{id: 3, name: "CFO", parent_id: 1 },
-      %{id: 4, name: "Manager 1", parent_id: 2 },
-      %{id: 5, name: "Manager 2", parent_id: 2 }
-    ]
-
+  def solve(workers) do
     ceo = find_ceo(workers)
 
     childrens = find_childrens(workers, %{}, parent: ceo)
 
-    %{
+    final_map = %{
       id: ceo.id,
       name: ceo.name,
       children: childrens
     }
+
+    Jason.encode(final_map)
   end
 
-  defp find_childrens(workers, final_map, opts \\ []) do
+  defp find_childrens(workers, final_map, opts) do
     parent = Keyword.get(opts, :parent)
 
     childrens = Enum.filter(workers, fn x -> x.parent_id == parent.id end)
-    
-    Enum.map(childrens, fn x -> 
+
+    Enum.map(childrens, fn x ->
       %{
         id: x.id,
         name: x.name,
